@@ -1,17 +1,18 @@
-# Claude Code Sandbox
+# Gemini CLI Sandbox
 
-Secure, isolated development container for running Anthropic's Claude Code CLI with network firewall restrictions.
+Secure, isolated development container for running Google's Gemini CLI with network firewall restrictions.
 
 ## Overview
 
-This Dev Container provides a hardened environment for Claude Code with:
+This Dev Container provides a hardened environment for Gemini CLI with:
 
 - **Network firewall** restricting outbound access to approved domains only
-- **Claude Code CLI** pre-installed and configured
+- **Gemini CLI** pre-installed and configured
 - **Modern development tools** (git, GitHub CLI, ripgrep, fzf, delta)
 - **ZSH shell** with Oh My Zsh and plugins
-- **Persistent volumes** for command history and Claude configuration
+- **Persistent volumes** for command history and Gemini configuration
 - **VS Code extensions** for an enhanced development experience
+- **Auto-start** - Gemini CLI launches automatically when container attaches
 
 ## Quick Start
 
@@ -19,7 +20,7 @@ This Dev Container provides a hardened environment for Claude Code with:
 
 1. Open this directory in VS Code:
    ```bash
-   code claude-cli/
+   code gemini-cli/
    ```
 
 2. When prompted, click "Reopen in Container" or use Command Palette:
@@ -28,31 +29,31 @@ This Dev Container provides a hardened environment for Claude Code with:
 
 3. Wait for the container to build and the firewall to initialize
 
-4. Start using Claude Code:
+4. Gemini CLI will start automatically, or run manually:
    ```bash
-   claude
+   gemini
    ```
 
 ### Using Docker Directly
 
 ```bash
-docker build -t claude-code-sandbox .
+docker build -t gemini-cli-sandbox .
 docker run -it --cap-add=NET_ADMIN --cap-add=NET_RAW \
   -v $(pwd):/workspace \
-  -v claude-code-config:/home/node/.claude \
-  -v claude-code-history:/commandhistory \
-  claude-code-sandbox
+  -v gemini-config:/home/node/.gemini \
+  -v gemini-history:/commandhistory \
+  gemini-cli-sandbox
 ```
 
 ## Network Access Policy
 
 The firewall allows outbound connections to:
 
-### Anthropic Services
-- `api.anthropic.com` - Claude API endpoints
-- `sentry.io` - Error reporting
-- `statsig.anthropic.com` - Feature flags and analytics
-- `statsig.com` - Analytics service
+### Google Services
+- `apis.google.com` - Google APIs
+- `www.googleapis.com` - Google API services
+- `accounts.google.com` - Google authentication
+- `codeassist.google.com` - Gemini code assistance services
 
 ### Development Services
 - GitHub (web, api, git) - All GitHub IP ranges
@@ -76,7 +77,7 @@ The firewall allows outbound connections to:
 | Argument | Default | Description |
 |----------|---------|-------------|
 | `TZ` | `America/Chicago` | Container timezone |
-| `CLAUDE_CODE_VERSION` | `latest` | Version of @anthropic-ai/claude-code to install |
+| `GEMINI_VERSION` | `latest` | Version of @google/gemini-cli to install |
 | `GIT_DELTA_VERSION` | `0.18.2` | Version of git-delta for enhanced diffs |
 | `ZSH_IN_DOCKER_VERSION` | `1.2.0` | Version of zsh-in-docker installer |
 
@@ -90,8 +91,8 @@ The container requires these Linux capabilities to configure the firewall:
 
 | Volume | Mount Point | Purpose |
 |--------|-------------|---------|
-| `claude-code-bashhistory-${devcontainerId}` | `/commandhistory` | Bash/ZSH command history |
-| `claude-code-config-${devcontainerId}` | `/home/node/.claude` | Claude Code configuration and cache |
+| `gemini-bashhistory-${devcontainerId}` | `/commandhistory` | Bash/ZSH command history |
+| `gemini-config-${devcontainerId}` | `/home/node/.gemini` | Gemini CLI configuration and cache |
 
 ### Environment Variables
 
@@ -99,7 +100,7 @@ The container requires these Linux capabilities to configure the firewall:
 |----------|-------|-------------|
 | `DEVCONTAINER` | `true` | Indicates running in a dev container |
 | `NODE_OPTIONS` | `--max-old-space-size=4096` | Increase Node.js memory limit |
-| `CLAUDE_CONFIG_DIR` | `/home/node/.claude` | Claude Code config directory |
+| `GEMINI_CONFIG_DIR` | `/home/node/.gemini` | Gemini CLI config directory |
 | `POWERLEVEL9K_DISABLE_GITSTATUS` | `true` | Disable slow git status in prompt |
 | `SHELL` | `/bin/zsh` | Default shell |
 | `EDITOR` | `nano` | Default text editor |
@@ -108,7 +109,7 @@ The container requires these Linux capabilities to configure the firewall:
 ## Installed Tools
 
 ### CLI Tools
-- `claude` - Anthropic's Claude Code CLI
+- `gemini` - Google's Gemini CLI
 - `gh` - GitHub CLI
 - `git` - Version control
 - `delta` - Syntax-highlighted git diffs
@@ -134,7 +135,7 @@ The container requires these Linux capabilities to configure the firewall:
 ## VS Code Extensions
 
 Pre-installed extensions:
-- `anthropic.claude-code` - Claude Code extension
+- `Google.gemini-cli-vscode-ide-companion` - Gemini CLI VS Code companion
 - `dbaeumer.vscode-eslint` - ESLint integration
 - `esbenp.prettier-vscode` - Code formatter
 
@@ -163,11 +164,11 @@ Edit `init-firewall.sh` and add domains to the resolution loop (around line 67):
 
 ```bash
 for domain in \
+    "apis.google.com" \
+    "www.googleapis.com" \
+    "accounts.google.com" \
+    "codeassist.google.com" \
     "registry.npmjs.org" \
-    "api.anthropic.com" \
-    "sentry.io" \
-    "statsig.anthropic.com" \
-    "statsig.com" \
     "marketplace.visualstudio.com" \
     "vscode.blob.core.windows.net" \
     "update.code.visualstudio.com" \
@@ -176,21 +177,21 @@ for domain in \
 
 Rebuild the container after changes:
 ```bash
-docker build --no-cache -t claude-code-sandbox .
+docker build --no-cache -t gemini-cli-sandbox .
 ```
 
-### Changing Claude Code Version
+### Changing Gemini CLI Version
 
 Rebuild with a specific version:
 ```bash
-docker build --build-arg CLAUDE_CODE_VERSION="1.2.3" -t claude-code-sandbox .
+docker build --build-arg GEMINI_VERSION="1.2.3" -t gemini-cli-sandbox .
 ```
 
 ### Changing Timezone
 
 Rebuild with your timezone:
 ```bash
-docker build --build-arg TZ="America/New_York" -t claude-code-sandbox .
+docker build --build-arg TZ="America/New_York" -t gemini-cli-sandbox .
 ```
 
 Or set it in `devcontainer.json`:
@@ -204,23 +205,32 @@ Or set it in `devcontainer.json`:
 }
 ```
 
+### Disabling Auto-Start
+
+To prevent Gemini CLI from auto-starting, edit `devcontainer.json` and remove or comment out:
+```json
+"postAttachCommand": "gemini",
+```
+
 ## Troubleshooting
 
-### Claude Code Cannot Connect to API
+### Gemini CLI Cannot Connect to API
 
-Check if api.anthropic.com is in the allowed set:
+Check if Google APIs are in the allowed set:
 ```bash
-sudo ipset list allowed-domains | grep -A 5 "anthropic"
+sudo ipset list allowed-domains | grep -A 5 "google"
 ```
 
 Verify DNS resolution:
 ```bash
-dig +short api.anthropic.com
+dig +short apis.google.com
+dig +short www.googleapis.com
 ```
 
 Test connectivity:
 ```bash
-curl -v https://api.anthropic.com
+curl -v https://apis.google.com
+curl -v https://www.googleapis.com
 ```
 
 ### Firewall Blocking Legitimate Traffic
@@ -258,7 +268,7 @@ sudo ipset list allowed-domains | grep -A 10 "registry"
 
 Clear Docker build cache:
 ```bash
-docker build --no-cache -t claude-code-sandbox .
+docker build --no-cache -t gemini-cli-sandbox .
 ```
 
 Check Docker has internet access:
@@ -276,13 +286,33 @@ vim ~/.zshrc
 # Comment out or remove 'git' from plugins array
 ```
 
+### Authentication Issues
+
+If you need to authenticate with Google services:
+
+1. Ensure `accounts.google.com` is accessible:
+   ```bash
+   curl -I https://accounts.google.com
+   ```
+
+2. Check Gemini CLI configuration:
+   ```bash
+   ls -la ~/.gemini
+   ```
+
+3. Re-authenticate if needed:
+   ```bash
+   gemini auth login
+   ```
+
 ## Security Notes
 
 - The container runs as the `node` user (non-root)
 - Firewall rules prevent exfiltration to unauthorized domains
-- Persistent volumes may contain sensitive data (API keys)
+- Persistent volumes may contain sensitive data (API keys, tokens)
 - The `node` user has sudo access only to the firewall script
 - Container requires elevated capabilities (NET_ADMIN, NET_RAW)
+- Google service authentication tokens are stored in `/home/node/.gemini`
 
 ## Working Directory
 
@@ -295,7 +325,7 @@ This is mounted from your local directory via:
 ## Support
 
 For issues with:
-- **Claude Code**: Visit https://github.com/anthropics/claude-code
+- **Gemini CLI**: Visit Google's Gemini CLI documentation
 - **This container**: Open an issue in the parent repository
 - **Firewall rules**: Check `init-firewall.sh` and iptables documentation
 

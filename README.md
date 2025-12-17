@@ -30,7 +30,15 @@ Secure environment for running OpenAI's Codex CLI.
 - **API Access**: api.openai.com
 - **Documentation**: [codex-cli/README.md](codex-cli/README.md)
 
-Both sandboxes allow access to GitHub, npm registry, and VS Code services while blocking all other outbound traffic.
+### [Gemini CLI Sandbox](gemini-cli/)
+
+Secure environment for running Google's Gemini CLI.
+
+- **Location**: `gemini-cli/`
+- **API Access**: apis.google.com, www.googleapis.com
+- **Documentation**: [gemini-cli/README.md](gemini-cli/README.md)
+
+All sandboxes allow access to GitHub, npm registry, and VS Code services while blocking all other outbound traffic.
 
 ## Quick Start
 
@@ -39,7 +47,7 @@ Both sandboxes allow access to GitHub, npm registry, and VS Code services while 
 1. Clone this repository:
 
    ```bash
-   git clone https://github.com/stitcombe/llm-sandboxes.git
+   git clone https://github.com/loon-labs/llm-sandboxes.git
    cd llm-sandboxes
    ```
 
@@ -49,6 +57,8 @@ Both sandboxes allow access to GitHub, npm registry, and VS Code services while 
    code claude-cli/
    # or
    code codex-cli/
+   # or
+   code gemini-cli/
    ```
 
 3. Click "Reopen in Container" when prompted, or use Command Palette (`Cmd+Shift+P` / `Ctrl+Shift+P`) and select "Remote-Containers: Reopen in Container"
@@ -58,7 +68,7 @@ Both sandboxes allow access to GitHub, npm registry, and VS Code services while 
 ### Using Docker Directly
 
 ```bash
-cd claude-cli  # or codex-cli
+cd claude-cli  # or codex-cli or gemini-cli
 docker build -t sandbox .
 docker run -it --cap-add=NET_ADMIN --cap-add=NET_RAW \
   -v $(pwd):/workspace \
@@ -106,6 +116,7 @@ Please refer to the individual README files:
 
 - **Claude Code Sandbox**: [claude-cli/README.md](claude-cli/README.md)
 - **Codex CLI Sandbox**: [codex-cli/README.md](codex-cli/README.md)
+- **Gemini CLI Sandbox**: [gemini-cli/README.md](gemini-cli/README.md)
 
 ## Prerequisites
 
@@ -115,10 +126,7 @@ Please refer to the individual README files:
 
 ## Known Issues
 
-- **codex-cli**: Filename typo `init-filrewall.sh` (should be `init-firewall.sh`)
-- **codex-cli**: Missing or incomplete `devcontainer.json` configuration
-
-See individual sandbox READMEs for details and workarounds.
+See individual sandbox READMEs for any known issues, troubleshooting guides, and workarounds.
 
 ## Security Considerations
 
@@ -134,10 +142,10 @@ Always review and understand the firewall rules before using in sensitive enviro
 
 Contributions are welcome! Please:
 
-1. Test your changes in both sandboxes
+1. Test your changes in all sandboxes
 2. Ensure firewall rules remain restrictive
 3. Update documentation for any new features or domains
-4. Verify both Claude Code and Codex functionality
+4. Verify all CLI tools function correctly
 
 ## License
 
